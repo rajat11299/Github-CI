@@ -44,7 +44,7 @@ pipeline {
         }
         stage('Image pushing to Google Artifact') {
             steps {
-                // Define steps for the image push....
+                // Define steps for the image push...
                 echo 'Image pushing...'
                 sh 'gcloud auth configure-docker \
                     asia-east1-docker.pkg.dev'
