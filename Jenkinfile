@@ -36,8 +36,8 @@ pipeline {
                 sh 'docker build -t asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new .'
             }
         }
-        stage('Trivy Image Scanning'){
-            steps{
+        stage('Trivy Image Scanning') {
+            steps {
                 sh 'trivy image asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new:latest'
             }
         }
@@ -48,10 +48,10 @@ pipeline {
                 sh 'gcloud auth configure-docker \
                     asia-east1-docker.pkg.dev'
                 sh 'docker push asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new'
-                
             }
         }
-        post {
+    }
+    post {
         success {
             echo 'Pipeline succeeded!'
             mail to: 'rajat11299@gmail.com',
