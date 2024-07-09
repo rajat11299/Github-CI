@@ -4,18 +4,17 @@ pipeline {
         maven 'maven'
     }
     environment {
-        SCANNER_HOME=tool 'SonarQube Scanner'
-        DOCKER_CRED    = credentials('DOCKER')
+        SCANNER_HOME = tool 'SonarQube Scanner'
+        DOCKER_CRED = credentials('DOCKER')
     }
     stages {
         stage('gitclone') {
             steps {
-                 git url: 'https://github.com/rajat11299/end-to-end-cicd.git' , branch: 'main'
+                git url: 'https://github.com/rajat11299/end-to-end-cicd.git', branch: 'main'
             }
         }
         stage('Maven Build') {
             steps {
-                // Define steps for the Build stage
                 echo 'Building the project...'
                 sh 'mvn clean package'
             }
@@ -23,47 +22,44 @@ pipeline {
         stage('sonarqube-analysis') {
             steps {
                 withSonarQubeEnv('sonarQube-server') {
-                 sh 'mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=rajat \
-                    -Dsonar.host.url=http://34.125.125.40:9000 \
-                    -Dsonar.login=squ_c7a0f151c105b6a5f06b008331cf7382283cb950'
+                    sh 'mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=rajat \
+                        -Dsonar.host.url=http://34.125.125.40:9000 \
+                        -Dsonar.login=${env.SONAR_TOKEN}'
                 }
             }
         }
         stage('Docker Image Creation') {
             steps {
-                // Define steps for the image build
                 echo 'Image building...'
-                sh 'docker build -t asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new .'
+                sh 'docker build -t your-image-tag .'
             }
         }
-        stage('Trivy Image Scanning'){
-            steps{
-                sh 'trivy image asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new:latest'
+        stage('Trivy Image Scanning') {
+            steps {
+                sh 'trivy image your-image-tag:latest'
             }
         }
         stage('Image pushing to Google Artifact') {
             steps {
-                // Define steps for the image push...
                 echo 'Image pushing...'
-                sh 'gcloud auth configure-docker \
-                    asia-east1-docker.pkg.dev'
-                sh 'docker push asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new'
-                
+                sh 'gcloud auth configure-docker asia-east1-docker.pkg.dev'
+                sh 'docker push your-image-tag'
             }
         }
-        post {
-            success {
-                echo 'Pipeline succeeded!'
-                mail to: 'rajat11299@gmail.com',
-                     subject: "Pipeline Succeeded: ${currentBuild.fullDisplayName}",
-                     body: "The pipeline ${env.BUILD_URL} has successfully completed."
+    }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+            mail to: 'rajat11299@gmail.com',
+                subject: "Pipeline Succeeded: ${currentBuild.fullDisplayName}",
+                body: "The pipeline ${env.BUILD_URL} has successfully completed."
         }
         failure {
             echo 'Pipeline failed!'
             mail to: 'rajat11299@gmail.com',
-                 subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
-                 body: "The pipeline ${env.BUILD_URL} has failed. Check the logs for details."
+                subject: "Pipeline Failed: ${currentBuild.fullDisplayName}",
+                body: "The pipeline ${env.BUILD_URL} has failed. Check the logs for details."
         }
     }
 }
