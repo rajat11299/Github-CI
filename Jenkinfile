@@ -31,24 +31,27 @@ pipeline {
         }
         stage('Docker Image Creation') {
             steps {
+                // Define steps for the image build
                 echo 'Image building...'
-                sh 'docker build -t your-image-tag .'
+                sh 'docker build -t asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new .'
             }
         }
-        stage('Trivy Image Scanning') {
-            steps {
-                sh 'trivy image your-image-tag:latest'
+        stage('Trivy Image Scanning'){
+            steps{
+                sh 'trivy image asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new:latest'
             }
         }
         stage('Image pushing to Google Artifact') {
             steps {
+                // Define steps for the image push...
                 echo 'Image pushing...'
-                sh 'gcloud auth configure-docker asia-east1-docker.pkg.dev'
-                sh 'docker push your-image-tag'
+                sh 'gcloud auth configure-docker \
+                    asia-east1-docker.pkg.dev'
+                sh 'docker push asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image/java-application-new'
+                
             }
         }
-    }
-    post {
+        post {
         success {
             echo 'Pipeline succeeded!'
             mail to: 'rajat11299@gmail.com',
