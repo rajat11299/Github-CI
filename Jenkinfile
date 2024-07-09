@@ -23,9 +23,9 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarQube-server') {
                     sh 'mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=rajat \
+                        -Dsonar.projectKey=CI \
                         -Dsonar.host.url=http://34.125.125.40:9000 \
-                        -Dsonar.login=${env.SONAR_TOKEN}'
+                        -Dsonar.login=sqp_1aaaf63b9f4858839c8e318c016456f46f542e42'
                 }
             }
         }
