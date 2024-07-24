@@ -1,57 +1,46 @@
 name: CI/CD Pipeline
 
 on:
-  push: 
+  push:
     branches:
       - main
   pull_request:
     branches:
       - main
   workflow_dispatch:
+
 env:
   SONARQUBE_URL: 'http://34.125.125.40:9000'
-  SONARQUBE_LOGIN: ${{ secrets.SONAR_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GCLOUD_PROJECT: 'charged-gravity-425405-j6'
   IMAGE_NAME: 'java-application'
   DOCKER_REPO: 'asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image'
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4.1.7
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2.1.2
-      with:
-        credentials_json: ${{ secrets.GCP_CREDS }}
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2.1.2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDS }}
 
-    - name: Setup Java JDK
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: 11
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: 11
 
-    - name: Set up Maven
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: '11'
-        cache: 'maven'
+      - name: Setup Maven
+        run: |
+          sudo apt-get install -y maven
 
-    
-    - name: SonarQube Analysis
-      run: mvn clean verify sonar:sonar \
-        -Dsonar.projectKey=rajat-github \
-        -Dsonar.host.url=${{ env.SONARQUBE_URL }} \
-        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-
-   
-    
-        
-    
-
-    
-  
-
+      - name: SonarQube Analysis
+        run: mvn clean verify sonar:sonar \
+          -Dsonar.projectKey=rajat-github \
+          -Dsonar.host.url=$SONARQUBE_URL \
+          -Dsonar.login=$SONAR_TOKEN
