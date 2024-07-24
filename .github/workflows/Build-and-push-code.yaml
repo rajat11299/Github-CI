@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  SONARQUBE_URL: 'http://34.125.125.40:9000'  # Update with your SonarQube server URL
+  SONARQUBE_URL: "http://34.125.125.40:9000"  # Update with your SonarQube server URL
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   GCLOUD_PROJECT: 'charged-gravity-425405-j6'
   IMAGE_NAME: 'java-application'
