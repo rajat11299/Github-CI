@@ -33,18 +33,17 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: 17  # Update to the desired Java version
-          cache: 'maven'  # Ensure Maven is cached for faster builds
+          java-version: '11'  # Update to the desired Java version
 
-      - name: Cache SonarQube packages
-        uses: actions/cache@v2
+      - name: Build with Maven
+        run: mvn clean install -f ./pom.xml
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
         with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Build and Analyze with SonarQube
+          projectBaseDir: .
+          args: >
+           -Dsonar.organization=my-org
+           -Dsonar.projectKey= rajat-github
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONARQUBE_URL }}
-        run: mvn clean verify sonar:sonar -Dsonar.projectKey=rajat-github -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}
+          SONAR_HOST_URL: ${{ env.SONARQUBE_URL }}
