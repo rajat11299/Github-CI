@@ -39,8 +39,7 @@ jobs:
         java-version: '11'
         cache: 'maven'
 
-    - name: Setup SonarQube
-      uses: SonarSource/sonarcloud-github-action@v1
+    
     - name: SonarQube Analysis
       run: mvn clean verify sonar:sonar \
         -Dsonar.projectKey=rajat-github \
