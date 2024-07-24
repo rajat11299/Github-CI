@@ -8,7 +8,12 @@ on:
     branches:
       - main
   workflow_dispatch:
-
+env:
+  SONARQUBE_URL: 'http://34.125.125.40:9000'
+  SONARQUBE_LOGIN: ${{ secrets.SONAR_TOKEN }}
+  GCLOUD_PROJECT: 'charged-gravity-425405-j6'
+  IMAGE_NAME: 'java-application'
+  DOCKER_REPO: 'asia-east1-docker.pkg.dev/charged-gravity-425405-j6/docker-image'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,6 +38,15 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
         cache: 'maven'
+
+    - name: Setup SonarQube
+      uses: SonarSource/sonarcloud-github-action@v1
+    - name: SonarQube Analysis
+      run: mvn clean verify sonar:sonar \
+        -Dsonar.projectKey=rajat-github \
+        -Dsonar.host.url=${{ env.SONARQUBE_URL }} \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
 
    
     
