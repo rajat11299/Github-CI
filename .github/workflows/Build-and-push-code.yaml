@@ -35,10 +35,6 @@ jobs:
           distribution: 'adopt'
           java-version: 11
 
-      - name: Setup Maven
-        run: |
-          sudo apt-get install -y maven
-
       - name: SonarQube Analysis
         run: mvn clean verify sonar:sonar \
           -Dsonar.projectKey=rajat-github \
