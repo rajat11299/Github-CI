@@ -26,8 +26,14 @@ jobs:
       with:
         java-version: 11
 
-    - name: Build With Maven
-      run: mvn -B clean package
+    - name: Set up Maven
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+        cache: 'maven'
+
+   
     
         
     
